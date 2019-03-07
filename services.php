@@ -7,18 +7,33 @@
  */
 
 use Workerman\Worker;
+use \Workerman\Lib\Timer;
 require_once __DIR__ . '/Autoloader.php';
-// 创建一个Worker监听2345端口，使用http协议通讯
-$http_worker = new Worker("http://0.0.0.0:2345");
 
-// 启动4个进程对外提供服务
-$http_worker->count = 4;
-
-// 接收到浏览器发送的数据时回复hello world给浏览器
-$http_worker->onMessage = function($connection, $data)
+class Mail
 {
-    // 向浏览器发送hello world
-    $connection->send('hello world');
+    // 注意，回调函数属性必须是public
+    public function send($to, $content)
+    {
+        echo "send mail".PHP_EOL;
+    }
+
+    public function sendLater($to, $content)
+    {
+        // 回调的方法属于当前的类，则回调数组第一个元素为$this
+        Timer::add(1, array($this, 'send'), array($to, $content), false);
+    }
+}
+
+$task = new Worker();
+$task->count = 5;
+$task->onWorkerStart = function($task)
+{
+    // 10秒后发送一次邮件
+    $mail = new Mail();
+    $to = 'workerman@workerman.net';
+    $content = 'hello workerman';
+    $mail->sendLater($to, $content);
 };
 
 // 运行worker
