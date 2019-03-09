@@ -8,21 +8,53 @@
 
 use Workerman\Worker;
 use \Workerman\Lib\Timer;
+use \Workerman\Lib\Requests;
+use \Workerman\Lib\XiaoeSdk;
+
+
 require_once __DIR__ . '/Autoloader.php';
 
 class Mail
 {
-    private static $time_interval = 0.5;
+    private static $time_interval = 1;
     private static $timer_id;
+    private static $version  = '2.0';
+    private static $use_type = '0';
 
-    public function send($to, $content)
+
+    public function check_orders($to, $content)
     {
-        echo "send mail".date('Y-m-d H:i:s',time()).PHP_EOL;
+        //获取订单列表
+        $cmd    = "order.list.get";
+        $params = array();
+
+        $result = XiaoeSdk::send($cmd,$params,self::$use_type,self::$version);
+
+        if($result['code'] == 0 && $result['msg'] == 'success')
+        {
+
+            print_r($result);
+//            foreach ($result['data'] as $value)
+//            {
+//
+//                //已支付订单,触发邮件、短信提醒
+//                if($value['order_state'] == 1)
+//                {
+//                    $created_at = strtotime($value['created_at']);
+//
+//                    //30秒之内付款的发送邮件
+//                    if((time() - $created_at) < 30)
+//                    {
+//
+//                    }
+//                }
+//            }
+        }
     }
 
     public function sendLater($to, $content)
     {
-        self::$timer_id = Timer::add(self::$time_interval, array($this, 'send'), array($to, $content), true);
+        self::$timer_id = Timer::add(self::$time_interval, array($this, 'check_orders'), array($to, $content), true);
     }
 }
 

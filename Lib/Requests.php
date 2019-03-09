@@ -5,8 +5,9 @@
  * Date: 2019/1/11
  * Time: 9:12 PM
  */
+namespace Workerman\Lib;
 
-class requests
+class Requests
 {
 
     const VERSION = '1.0.0';

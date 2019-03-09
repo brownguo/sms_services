@@ -18,15 +18,15 @@ include './helper/requests.php';
 $time_stamp = date('YmdHis',time());
 
 
-$url = 'xxxx';
+$url = 'http://39.104.141.71:8088/v2sms.aspx?action=send';
 
 
-$sign = 'xxx';
+$sign = 'jy865122jy865122';
 $params = array(
     'userid'=>183,
     'timestamp'=>$time_stamp,
     'sign'=>md5($sign.$time_stamp),
-    'mobile'=>'xxxx',
+    'mobile'=>'18513558982',
     'content'=>'Halo baby,This is the demo version!',
     'sendTime'=>'',
     'action'=>'send',
